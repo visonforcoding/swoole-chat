@@ -5,7 +5,7 @@
  * Created on   :   2016-9-18 12:19:55 by caowenpeng , caowenpeng1990@126.com
  */
 $serv = new swoole_websocket_server("0.0.0.0", 9502);
-//$serv->set(array('daemonize' => true));
+//$serv->set(array('daemonize' => true));   //以守护进程运行
 $serv->on('Open', function($server, $req) {
     echo "connection open: " . $req->fd;
     echo "connection counts: " . count($server->connections)."\r\n";
