@@ -2,16 +2,6 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <!--  This file has been downloaded from bootdey.com    @bootdey on twitter -->
-        <!--  All snippets are MIT license http://bootdey.com/license -->
-        <!-- 
-            The codes are free, but we require linking to our web site.
-            Why to Link?
-            A true story: one girl didn't set a link and had no decent date for two years, and another guy set a link and got a top ranking in Google! 
-            Where to Put the Link?
-            home, about, credits... or in a good page that you want
-            THANK YOU MY FRIEND!
-        -->
         <title>messages like material design - Bootdey.com</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="./static/js/jquery.js"></script>
@@ -195,16 +185,17 @@
                             </li>
                         </ul>
                     </div>
-
-                    <div class="message-feed media">
-                        <div class="pull-left">
-                            <img src="http://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="img-avatar">
-                        </div>
-                        <div class="media-body">
-                            <div class="mf-content">
-                                Quisque consequat arcu eget odio cursus, ut tempor arcu vestibulum. Etiam ex arcu, porta a urna non, lacinia pellentesque orci. Proin semper sagittis erat, eget condimentum sapien viverra et. Mauris volutpat magna nibh, et condimentum est rutrum a. Nunc sed turpis mi. In eu massa a sem pulvinar lobortis.
+                    <div class="msg-content" id="msg-content">
+                        <div class="message-feed media" v-for="msg in msgs">
+                            <div class="pull-left">
+                                <img src="http://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="img-avatar">
                             </div>
-                            <small class="mf-date"><i class="fa fa-clock-o"></i> 20/02/2015 at 09:00</small>
+                            <div class="media-body">
+                                <div class="mf-content">
+                                    {{msg}}
+                                </div>
+                                <small class="mf-date"><i class="fa fa-clock-o"></i> 20/02/2015 at 09:00</small>
+                            </div>
                         </div>
                     </div>
                     <div class="msb-reply">
@@ -214,19 +205,28 @@
                 </div>
             </div>
         </div>
-        <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+        <script src="./static/bootstrap/js/bootstrap.min.js"></script>
+        <script src="./static/vue/vue.min.js"></script>
         <script type="text/javascript">
+            var msgvm = new Vue({
+                    el: '#msg-content',
+                    data: {
+                        msgs: [
+                        ]
+                    }
+            })
             $(function () {
                 $('.ms-body').height($(window).height());
-                var ws = new WebSocket("ws://192.168.33.10:9502");
+                var ws = new WebSocket("ws://192.168.1.7:9502");
                 ws.onopen = function (event) {
                     console.log('成功连接ws服务器!');
                     ws.send("接入服务器");
                 };
                 ws.onmessage = function (event) {
                     console.log(event.data);
+                    msgvm.msgs.push(event.data);
                 };
-                $('#send').click(function(){
+                $('#send').click(function () {
                     var content = $(this).prev().val();
                     console.log(content);
                     ws.send(content);
