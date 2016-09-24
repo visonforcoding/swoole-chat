@@ -15,7 +15,10 @@ body {
     color: #767676;
     background-color: #edecec;
 }
-
+#chat{
+    margin-top:100px;
+    margin-bottom:100px;
+}
 #messages-main {
     position: relative;
     margin: 0 auto;
@@ -34,6 +37,9 @@ body {
     height: 100%;
     width: 240px;
     background: #fff;
+}
+#user-list{
+    overflow-y: scroll;
 }
 @media (min-width:768px) {
     #messages-main .ms-body {
@@ -105,11 +111,17 @@ body {
 .message-feed.right .mf-content {
     background: #eee;
 }
+#msg-content{
+    overflow-y: scroll;
+}
 .mf-content {
     padding: 12px 17px 13px;
     border-radius: 2px;
     display: inline-block;
-    max-width: 80%
+    min-width:120px;
+    /*max-width: 80%;*/
+    word-wrap: break-word;
+    word-break: break-all;
 }
 .mf-date {
     display: block;

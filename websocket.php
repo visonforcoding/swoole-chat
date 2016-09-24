@@ -16,7 +16,14 @@ $serv->on('Message', function($server, $frame) {
 //    $server->push($frame->fd, json_encode(["hello", "world"]));
     var_dump($server->connections);
     foreach ($server->connections as $fd) {
-        $server->push($fd, json_encode($frame->data,JSON_UNESCAPED_UNICODE));
+        $data = [
+          'body'=>$frame->data,  
+          'nick'=>'张三',  
+          'avatar'=>'1.jpg',  
+          'timestamp'=>  time(),  
+          'unique'=> md5(uniqid()),  
+        ];
+        $server->push($fd, json_encode($data,JSON_UNESCAPED_UNICODE));
     }
 });
 

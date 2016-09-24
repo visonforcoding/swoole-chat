@@ -10,7 +10,7 @@
         <link href="./static/css/chat.css" rel="stylesheet">
     </head>
     <body>
-        <div class="container bootstrap snippet">
+        <div id="chat" class="container bootstrap snippet">
             <div class="tile tile-alt" id="messages-main">
                 <div class="ms-menu">
                     <div class="ms-user clearfix">
@@ -30,7 +30,7 @@
                         </div>
                     </div>
 
-                    <div class="list-group lg-alt">
+                    <div id="user-list" class="list-group lg-alt">
                         <a class="list-group-item media" href="">
                             <div class="pull-left">
                                 <img src="http://bootdey.com/img/Content/avatar/avatar2.png" alt="" class="img-avatar">
@@ -192,14 +192,14 @@
                             </div>
                             <div class="media-body">
                                 <div class="mf-content">
-                                    {{msg}}
+                                    {{msg.body}}
                                 </div>
-                                <small class="mf-date"><i class="fa fa-clock-o"></i> 20/02/2015 at 09:00</small>
+                                <small class="mf-date"><i class="fa fa-clock-o"></i> {{new Date(parseInt(msg.timestamp) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ')}}</small>
                             </div>
                         </div>
                     </div>
                     <div class="msb-reply">
-                        <textarea  placeholder="What's on your mind..."></textarea>
+                        <textarea  placeholder="[Ctrl+enter 发送消息]"></textarea>
                         <button id="send"><i class="fa fa-paper-plane-o"></i></button>
                     </div>
                 </div>
@@ -208,35 +208,52 @@
         <script src="./static/bootstrap/js/bootstrap.min.js"></script>
         <script src="./static/vue/vue.min.js"></script>
         <script type="text/javascript">
-            var msgvm = new Vue({
-                    el: '#msg-content',
-                    data: {
-                        msgs: [
-                        ]
-                    }
-            })
-            $(function () {
-                $('.ms-body').height($(window).height());
-                var ws = new WebSocket("ws://192.168.1.7:9502");
-                ws.onopen = function (event) {
-                    console.log('成功连接ws服务器!');
-                    ws.send("接入服务器");
-                };
-                ws.onmessage = function (event) {
-                    console.log(event.data);
-                    msgvm.msgs.push(event.data);
-                };
-                $('#send').click(function () {
-                    var content = $(this).prev().val();
-                    console.log(content);
-                    ws.send(content);
-                });
-                if ($('#ms-menu-trigger')[0]) {
-                    $('body').on('click', '#ms-menu-trigger', function () {
-                        $('.ms-menu').toggleClass('toggled');
-                    });
-                }
-            });
+var msgvm = new Vue({
+    el: '#msg-content',
+    data: {
+        msgs: [
+        ]
+    }
+});
+$(function () {
+    var ws = new WebSocket("ws://192.168.33.10:9502");
+    setHeight();
+    $(window).bind('resize', function () {
+        setHeight();
+    });
+    $(document).keydown(function (e) {
+        if (e.which === 13&&e.ctrlKey) {
+            $('#send').trigger('click');
+        }
+    });
+    ws.onopen = function (event) {
+        ws.send("接入服务器");
+    };
+    ws.onmessage = function (event) {
+        console.log(event.data);
+        var data = JSON.parse(event.data);
+        msgvm.msgs.push(data);
+        $('.msg-content').animate({scrollTop:$(".msg-content").get(0).scrollHeight},'slow');  //滚动条自动到底部
+    };
+    $('#send').click(function () {
+        var content = $(this).prev().val();
+        if(content){
+            ws.send(content);
+            $(this).prev().val('');
+        }
+    });
+    if ($('#ms-menu-trigger')[0]) {
+        $('body').on('click', '#ms-menu-trigger', function () {
+            $('.ms-menu').toggleClass('toggled');
+        });
+    }
+});
+function setHeight() {
+    $('.ms-body').height($(window).height() - 200);
+    $('.ms-menu').height($(window).height() - 67 - 200);
+    $('#user-list').height($(window).height() - 67 - 200 - 67 - 62);
+    $('.msg-content').height($(window).height() - 60 - 120 - 200);
+}
         </script>
     </body>
 </html>
