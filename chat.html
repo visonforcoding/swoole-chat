@@ -188,9 +188,10 @@
                     <div class="msg-content" id="msg-content">
                         <div class="message-feed media" v-for="msg in msgs">
                             <div class="pull-left">
-                                <img src="http://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="img-avatar">
+                                <img v-bind:src="msg.avatar" alt="" class="img-avatar">
                             </div>
                             <div class="media-body">
+                                <div class="nick">{{msg.nick}}</div>
                                 <div class="mf-content">
                                     {{msg.body}}
                                 </div>
@@ -212,7 +213,10 @@ var msgvm = new Vue({
     el: '#msg-content',
     data: {
         msgs: [
-        ]
+        ],
+        computed: {
+            // 一个计算属性的 getter
+        }
     }
 });
 $(function () {
@@ -222,22 +226,23 @@ $(function () {
         setHeight();
     });
     $(document).keydown(function (e) {
-        if (e.which === 13&&e.ctrlKey) {
+        if (e.which === 13 && e.ctrlKey) {
             $('#send').trigger('click');
         }
     });
     ws.onopen = function (event) {
-        ws.send("接入服务器");
+        //ws.send("接入服务器");
     };
     ws.onmessage = function (event) {
         console.log(event.data);
         var data = JSON.parse(event.data);
+        data.avatar = 'http://chat.dev/resource/avatar/'+data.avatar;
         msgvm.msgs.push(data);
-        $('.msg-content').animate({scrollTop:$(".msg-content").get(0).scrollHeight},'slow');  //滚动条自动到底部
+        $('.msg-content').animate({scrollTop: $(".msg-content").get(0).scrollHeight}, 'slow');  //滚动条自动到底部
     };
     $('#send').click(function () {
         var content = $(this).prev().val();
-        if(content){
+        if (content) {
             ws.send(content);
             $(this).prev().val('');
         }
