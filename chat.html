@@ -33,7 +33,7 @@
                     <div id="user-list" class="list-group lg-alt">
                         <a class="list-group-item media" href="">
                             <div class="pull-left">
-                                <img src="http://chat.dev/resource/avatar/avatar_1.jpg" alt="" class="img-avatar">
+                                <img src="http://chat.rc5j.cn/resource/avatar/avatar_1.jpg" alt="" class="img-avatar">
                             </div>
                             <div class="media-body">
                                 <div class="list-group-item-heading">曹麦穗</div>
@@ -152,7 +152,7 @@ var vm = new Vue({
     }
 });
 $(function () {
-    var ws = new WebSocket("ws://192.168.33.10:9502");
+    var ws = new WebSocket("ws://120.24.245.100:9502");
     setHeight();
     $(window).bind('resize', function () {
         setHeight();
@@ -170,18 +170,18 @@ $(function () {
         console.log(event.data);
         var data = JSON.parse(event.data);
         if (data.msgtype === 'userlist') {//第一次进入聊天室 初始化信息
-            data.profile.avatar = 'http://chat.dev/resource/avatar/' + data.profile.avatar;
+            data.profile.avatar = 'http://chat.rc5j.cn/resource/avatar/' + data.profile.avatar;
             vm.profile = data.profile;
             vm.room.create_time = data.create_time;
             $.each(data.items, function (i, n) {
-                data.items[i]['avatar'] = 'http://chat.dev/resource/avatar/' + n.avatar;
+                data.items[i]['avatar'] = 'http://chat.rc5j.cn/resource/avatar/' + n.avatar;
             });
             var userlist = data.items;
             vm.users = vm.users.concat(userlist);
         }
         if (data.msgtype === 'newuser') {//新加入了用户 更新用户列表
             var item = data.user;
-            item.avatar = 'http://chat.dev/resource/avatar/' + item.avatar;
+            item.avatar = 'http://chat.rc5j.cn/resource/avatar/' + item.avatar;
             vm.users.push(item);
         }
         if (data.msgtype === 'userout') {//用户退出 更新用户列表
@@ -191,7 +191,7 @@ $(function () {
             }));
         }
         if (data.msgtype === 'msg') {
-            data.avatar = 'http://chat.dev/resource/avatar/' + data.avatar;
+            data.avatar = 'http://chat.rc5j.cn/resource/avatar/' + data.avatar;
             vm.msgs.push(data);
         }
         $('.msg-content').animate({scrollTop: $(".msg-content").get(0).scrollHeight}, 'slow');  //滚动条自动到底部

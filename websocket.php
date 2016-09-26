@@ -12,7 +12,7 @@ $serv->set(array(
 ));   //以守护进程运行'
 //配置区
 
-$redis_host = '192.168.33.10';
+$redis_host = '127.0.0.1';
 $redis_port = '6379';
 $redis = new \Redis();
 $redis->connect($redis_host, $redis_port);
