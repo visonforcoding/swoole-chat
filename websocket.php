@@ -104,7 +104,7 @@ $serv->on('Close', function($server, $fd)use($redis, $room_admin) {
     $user = $redis->hGet('chat_room_user', $fd);
     $userinfo = json_decode($user);
     $redis->hDel('chat_room_user', $fd);
-    $redis->sAdd('chat_userinfo', $userinfo);
+    $redis->sAdd('chat_userinfo', $user);
     $data = [
         'msgtype' => 'msg', //消息类型
         'body' => $userinfo->nick . '退出了群聊!',
