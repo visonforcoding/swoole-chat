@@ -2,8 +2,10 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>messages like material design - Bootdey.com</title>
+        <title>swoole聊天demo - 麦穗博客</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="keywords" content="swoole,php,websocket,vue,聊天系统,webim,redis"/>
+        <meta name="description" content="基于swoole+vue+redis+websocket的聊天室"/>
         <script src="./static/js/jquery.js"></script>
         <link href="./static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
         <link href="./static/font-awesome/css/font-awesome.min.css" rel="stylesheet">
@@ -152,14 +154,6 @@ var vm = new Vue({
     }
 });
 $(function () {
-    setTimeout(function(){
-        //暂停服务
-        var data = {};
-        data.nick = '管理员';
-        data.avatar = 'http://chat.rc5j.cn/resource/avatar/avatar_1.jpg';
-        data.body = 'ws服务维护中....'
-        vm.msgs.push(data);
-    },2000)
     var ws = new WebSocket("ws://120.24.245.100:9502");
     setHeight();
     $(window).bind('resize', function () {

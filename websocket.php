@@ -12,10 +12,12 @@ $serv->set(array(
 ));   //以守护进程运行'
 //配置区
 
-$redis_host = '127.0.0.1';
-$redis_port = '6379';
+$redis_conf = [
+    'redis_host' => '127.0.0.1',
+    'redis_port' => '6379'
+];
 $redis = new \Redis();
-$redis->connect($redis_host, $redis_port);
+$redis->connect($redis_conf['redis_host'], $redis_conf['redis_port']);
 
 $room_admin = [
     'nick' => '曹麦穗',
@@ -24,11 +26,16 @@ $room_admin = [
 ];
 //每次启动 server 初始化数据  还原用户库 清空聊天室用户
 $avatars = file_get_contents('userinfo.json');
+$redis->del('chat_userinfo');
+$redis->del('chat_userinfo_src');
 foreach (json_decode($avatars) as $avatar) {
     $redis->sAdd('chat_userinfo', json_encode($avatar));
+    $redis->sAdd('chat_userinfo_src', json_encode($avatar));
 }
 $redis->del('chat_room_user');
-$serv->on('Open', function($server, $req)use($redis, $room_admin) {
+$serv->on('Open', function($server, $req)use($redis_conf, $room_admin) {
+    $redis = new \Redis();
+    $redis->connect($redis_conf['redis_host'], $redis_conf['redis_port']);
     //$req 对象是 server_http_request  $req->fd 属性 为客户端请求id 此id可用作push的发送对象
     $newuser = $redis->sPop('chat_userinfo');  //从昵称库中随机找一个用户 并删除
     $userinfo = json_decode($newuser);
@@ -80,9 +87,10 @@ $serv->on('Open', function($server, $req)use($redis, $room_admin) {
     //echo "connection counts: " . count($server->connections) . "\r\n";
 });
 
-$serv->on('Message', function($server, $frame)use($redis) {
+$serv->on('Message', function($server, $frame)use($redis_conf) {
     echo "message: " . $frame->data . "\r\n";
-
+    $redis = new \Redis();
+    $redis->connect($redis_conf['redis_host'], $redis_conf['redis_port']);
     foreach ($server->connections as $fd) {
         $user = $redis->hGet('chat_room_user', $frame->fd);
         $userinfo = json_decode($user);
@@ -98,13 +106,17 @@ $serv->on('Message', function($server, $frame)use($redis) {
     }
 });
 
-$serv->on('Close', function($server, $fd)use($redis, $room_admin) {
+$serv->on('Close', function($server, $fd)use($redis_conf, $room_admin) {
     echo "connection close: " . $fd . "\r\n";
     echo "connection counts: " . count($server->connections) . "\r\n";
+    $redis = new \Redis();
+    $redis->connect($redis_conf['redis_host'], $redis_conf['redis_port']);
     $user = $redis->hGet('chat_room_user', $fd);
     $userinfo = json_decode($user);
     $redis->hDel('chat_room_user', $fd);
-    $redis->sAdd('chat_userinfo', $user);
+    if ($redis->sismember('chat_userinfo_src', $user)) {
+        $redis->sAdd('chat_userinfo', $user);
+    }
     $data = [
         'msgtype' => 'msg', //消息类型
         'body' => $userinfo->nick . '退出了群聊!',
