@@ -152,6 +152,14 @@ var vm = new Vue({
     }
 });
 $(function () {
+    setTimeout(function(){
+        //暂停服务
+        var data = {};
+        data.nick = '管理员';
+        data.avatar = 'http://chat.rc5j.cn/resource/avatar/avatar_1.jpg';
+        data.body = 'ws服务维护中....'
+        vm.msgs.push(data);
+    },2000)
     var ws = new WebSocket("ws://120.24.245.100:9502");
     setHeight();
     $(window).bind('resize', function () {
