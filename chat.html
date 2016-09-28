@@ -12,7 +12,7 @@
         <link href="./static/css/chat.css" rel="stylesheet">
     </head>
     <body>
-        <div id="chat" class="container bootstrap snippet">
+        <div id="chat" class="bootstrap snippet">
             <div class="tile tile-alt" id="messages-main">
                 <div class="ms-menu">
                     <div id="profile" class="ms-user clearfix">
@@ -212,10 +212,10 @@ $(function () {
     }
 });
 function setHeight() {
-    $('.ms-body').height($(window).height() - 200);
-    $('.ms-menu').height($(window).height() - 67 - 200);
-    $('#user-list').height($(window).height() - 67 - 200 - 67 - 62);
-    $('.msg-content').height($(window).height() - 60 - 120 - 200);
+    $('.ms-body').height($(window).height());
+    $('.ms-menu').height($(window).height() - 67);
+    $('#user-list').height($(window).height() - 67- 67 - 62);
+    $('.msg-content').height($(window).height() - 60 - 120);
 }
         </script>
     </body>
